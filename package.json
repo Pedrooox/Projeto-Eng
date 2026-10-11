@@ -1,0 +1,28 @@
+{
+  "name": "projeto-eng",
+  "version": "1.0.0",
+  "description": "Trabalho voltado para matéria de Engenharia de Softwares",
+  "main": "Server.js",
+  "types": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Pedrooox/Projeto-Eng.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Pedrooox/Projeto-Eng/issues"
+  },
+  "homepage": "https://github.com/Pedrooox/Projeto-Eng#readme",
+  "dependencies": {
+    "better-sqlite3": "^13.0.3",
+    "express": "^5.3.0",
+    "mysql2": "^3.24.5"
+  }
+}
