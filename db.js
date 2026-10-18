@@ -1,17 +1,13 @@
 const Database = require('better-sqlite3');
-const db = new Database('database.sqlite');
+const db = new Database('farmacia.sqlite');
 
-
-module.exports = db;
-
-database.exec(`
-  CREATE TABLE IF NOT EXIST data(
-    key INTEGER PRIMARY KEY,
-    value TEXT
+db.exec(`
+  CREATE TABLE IF NOT EXISTS produtos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL UNIQUE,
+    codigo_barras TEXT NOT NULL UNIQUE,
+    preco REAL NOT NULL
   ) STRICT
 `);
 
-const insert = database.prepare('INSERT INTO data (key, value) VALUES (?, ?)');
-
-insert.run(1, 'ola');
-insert.run(2, 'mundo');
+module.exports = db;
