@@ -1,13 +1,16 @@
 const Database = require('better-sqlite3');
 const db = new Database('farmacia.sqlite');
 
+// Criação da tabela de medicamentos para o projeto
 db.exec(`
-  CREATE TABLE IF NOT EXISTS produtos (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome TEXT NOT NULL UNIQUE,
-    codigo_barras TEXT NOT NULL UNIQUE,
-    preco REAL NOT NULL
-  ) STRICT
+    CREATE TABLE IF NOT EXISTS medicamentos (
+        codigo INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome_comercial TEXT NOT NULL,
+        nome_generico TEXT,
+        unidade_medida TEXT,
+        validade TEXT,
+        preco REAL NOT NULL
+    );
 `);
 
 module.exports = db;
