@@ -4,14 +4,6 @@ const db = require('../db');
 const medicamento = [];
 router.use(express.json());
 
-router.get("/medicamento",(req, res) => {
-    return res.json(medicamento)
-})
-
-router.get('/server/:index', checkUserInArray, (req, res) => {
-return res.json(req.user);
-})
-
 
 // Rota para criar o medicamento no bd
 router.post("/medicamento", (req, res) => {
@@ -53,8 +45,8 @@ router.post("/medicamento", (req, res) => {
     }
 
 });
-
-router.ger("/ ", (req, res) => {
+// ROTA GET: Listar catálogo de medicamentos
+router.get("/ ", (req, res) => {
 
     try{
         const medicamentos = db.prepare(' SELECT * FROM Medicamentos ORDER BY codigo DESC').all();
