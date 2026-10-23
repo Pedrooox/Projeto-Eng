@@ -52,10 +52,18 @@ router.post("/medicamento", (req, res) => {
         return res.status(500).json({ error: "Erro interno no servidor ao tentar cadastrar o medicamento." });
     }
 
+});
 
-    medicamento.push(Nome_comercial);
+router.ger("/ ", (req, res) => {
 
-    return res.json(medicmento);
+    try{
+        const medicamentos = db.prepare(' SELECT * FROM Medicamentos ORDER BY codigo DESC').all();
+        return res.json(Medicamentos);
+    } catch (erro) {
+        console.erro("Erro ao buscar medicamentos:", error)
+        return  res.status(500).json( { error: "Erro ao buscar a listagem de medicamentos."});
+    }
+
 })
 
 
