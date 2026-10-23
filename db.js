@@ -1,19 +1,16 @@
 const Database = require('better-sqlite3');
-const db = new Database('database.sqlite');
+const db = new Database('farmacia.sqlite');
 
-// 1. Criar a tabela (com EXISTS no plural)
+// Criação da tabela de medicamentos para o projeto
 db.exec(`
-  CREATE TABLE IF NOT EXISTS Medicamentos (
-    codigo INTEGER PRIMARY KEY AUTOINCREMENT,
-    Nome_comercial TEXT NOT NULL,
-    Nome_generico TEXT,
-    Unidade_de_medida TEXT,
-    Validade REAL,
-    Preco REAL NOT NULL
-  ) STRICT
+    CREATE TABLE IF NOT EXISTS medicamentos (
+        codigo INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome_comercial TEXT NOT NULL,
+        nome_generico TEXT,
+        unidade_medida TEXT,
+        validade TEXT,
+        preco REAL NOT NULL
+    );
 `);
 
-
-
-// 3. Exportar no final do arquivo
 module.exports = db;
