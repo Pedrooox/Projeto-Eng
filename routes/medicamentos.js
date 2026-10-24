@@ -58,4 +58,49 @@ router.get("/Listar_medicamento", (req, res) => {
     }
 });
 
+router.put("/Alterar_medicamento/:codigo", (req, res) => {
+    const { codigo } = req.params;
+    const { nome_comercial, nome_generico, unidade_medida, validade, preco } = req.body; 
+    const preco_number = Number(preco);
+
+    if (!nome_comercial || !unidade_medida || !validade || isNaN(preco_number) || preco_number <= 0) {
+        return res.status(400).json({
+            erro: "Campos obrigatórios ausentes ou preço inválido."
+        });
+    }
+
+    try {
+        const stmt = db.prepare(' UPDATE medicamentoS SET nome_comercial = ?, nome_generico = ?, unidade_medida = ?, validade = ?, preco = ? WHERE  codigo = ?');
+        
+        const info = stmt.run(
+            nome_comercial.trim(),
+            nome_generico ? nome_generico.trim() : null,
+            unidade_medida.trim(),
+            validade,
+            preco_number,
+            codigo
+        );
+
+        if (info.changes == 0){
+            return res.status(404).json({ 
+                erro: "Medicamento não encontrado" });
+        }
+    
+        return res.status(200).json({
+            message: "Medicamento alterado!",
+            medicamento: {
+                codigo: Number(codigo),
+                nome_comercial,
+                nome_generico,
+                unidade_medida,
+                validade,
+                preco: preco_number
+                }
+            });
+        } catch (error){
+            console.error("Erro ao atualizar medicamento:", error);
+            return res.status(500).json({ error: "Erro interno ao atualizar o medicamento." });
+        }
+});
+
 module.exports = router;
