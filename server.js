@@ -7,7 +7,7 @@ app.use(express.json());
 app.use(express.static('public'));
 
 // Conecta as rotas de medicamentos na URL /api/medicamentos
-app.use('/api/medicamentos', medicamentosRoutes);
+app.use('/', medicamentosRoutes);
 
 const PORT = 3000;
 app.listen(PORT, () => {
