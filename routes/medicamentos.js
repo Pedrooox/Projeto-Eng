@@ -4,22 +4,23 @@ const db = require('../db');
 
 router.use(express.json());
 
-// Rota POST: Criar medicamento no banco de dados
-router.post("/Cadatro_medicamento", (req, res) => {
-    const { nome_comercial, nome_generico, unidade_medida, validade, preco } = req.body;
-
+// Rota POST: Cadastrar medicamento
+router.post("/medicamento", (req, res) => {
+    const { nome_comercial, nome_generico, unidade_medida, validade, preco, quantidade } = req.body;
+    
     const precoNumerico = Number(preco);
+    const qtdNumerica = Number(quantidade);
 
-    if (!nome_comercial || !unidade_medida || !validade || isNaN(precoNumerico) || precoNumerico <= 0) {
+    if (!nome_comercial || !unidade_medida || !validade || isNaN(precoNumerico) || precoNumerico <= 0 || isNaN(qtdNumerica) || qtdNumerica < 0) {
         return res.status(400).json({
-            erro: "Campos obrigatórios ausentes ou preço inválido."
+            erro: "Campos obrigatórios ausentes, preço ou quantidade inválidos."
         });
     }
 
     try {
         const stmt = db.prepare(`
-            INSERT INTO medicamentos (nome_comercial, nome_generico, unidade_medida, validade, preco)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO medicamentos (nome_comercial, nome_generico, unidade_medida, validade, preco, quantidade)
+            VALUES (?, ?, ?, ?, ?, ?)
         `);
 
         const info = stmt.run(
@@ -27,7 +28,8 @@ router.post("/Cadatro_medicamento", (req, res) => {
             nome_generico ? nome_generico.trim() : null,
             unidade_medida.trim(),
             validade,
-            precoNumerico
+            precoNumerico,
+            qtdNumerica
         );
 
         return res.status(201).json({
@@ -38,7 +40,8 @@ router.post("/Cadatro_medicamento", (req, res) => {
                 nome_generico,
                 unidade_medida,
                 validade,
-                preco: precoNumerico
+                preco: precoNumerico,
+                quantidade: qtdNumerica
             }
         });
     } catch (error) {
@@ -48,7 +51,7 @@ router.post("/Cadatro_medicamento", (req, res) => {
 });
 
 // Rota GET: Listar catálogo de medicamentos
-router.get("/Listar_medicamento", (req, res) => {
+router.get("/medicamento", (req, res) => {
     try {
         const medicamentos = db.prepare('SELECT * FROM medicamentos ORDER BY codigo DESC').all();
         return res.status(200).json(medicamentos);
@@ -59,21 +62,23 @@ router.get("/Listar_medicamento", (req, res) => {
 });
 
 // Rota PUT: Alterar medicamento por código
-router.put("/Alterar_medicamento/:codigo", (req, res) => {
+router.put("/medicamento/:codigo", (req, res) => {
     const { codigo } = req.params;
-    const { nome_comercial, nome_generico, unidade_medida, validade, preco } = req.body; 
+    const { nome_comercial, nome_generico, unidade_medida, validade, preco, quantidade } = req.body; 
+    
     const precoNumerico = Number(preco);
+    const qtdNumerica = Number(quantidade);
 
-    if (!nome_comercial || !unidade_medida || !validade || isNaN(precoNumerico) || precoNumerico <= 0) {
+    if (!nome_comercial || !unidade_medida || !validade || isNaN(precoNumerico) || precoNumerico <= 0 || isNaN(qtdNumerica) || qtdNumerica < 0) {
         return res.status(400).json({
-            erro: "Campos obrigatórios ausentes ou preço inválido."
+            erro: "Campos obrigatórios ausentes, preço ou quantidade inválidos."
         });
     }
 
     try {
         const stmt = db.prepare(`
             UPDATE medicamentos 
-            SET nome_comercial = ?, nome_generico = ?, unidade_medida = ?, validade = ?, preco = ? 
+            SET nome_comercial = ?, nome_generico = ?, unidade_medida = ?, validade = ?, preco = ?, quantidade = ?
             WHERE codigo = ?
         `);
         
@@ -83,6 +88,7 @@ router.put("/Alterar_medicamento/:codigo", (req, res) => {
             unidade_medida.trim(),
             validade,
             precoNumerico,
+            qtdNumerica,
             codigo
         );
 
@@ -100,7 +106,8 @@ router.put("/Alterar_medicamento/:codigo", (req, res) => {
                 nome_generico,
                 unidade_medida,
                 validade,
-                preco: precoNumerico
+                preco: precoNumerico,
+                quantidade: qtdNumerica
             }
         });
     } catch (error) {
@@ -109,8 +116,8 @@ router.put("/Alterar_medicamento/:codigo", (req, res) => {
     }
 });
 
-// Rota DELETE: deleta algum medicamento
-router.delete("/Deletar_medicamento/:codigo", (req, res) => {
+// Rota DELETE: deletar algum medicamento
+router.delete("/medicamento/:codigo", (req, res) => {
     const { codigo } = req.params;
 
     try {
