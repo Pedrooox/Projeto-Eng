@@ -9,7 +9,8 @@ db.exec(`
         nome_generico TEXT,
         unidade_medida TEXT,
         validade TEXT,
-        preco REAL NOT NULL
+        preco REAL NOT NULL,
+        quantidade INTEGER NOT NULL DEFAULT 0
     );
 `);
 
