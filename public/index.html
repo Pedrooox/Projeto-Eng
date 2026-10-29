@@ -1,11 +1,554 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Farmácia - Gestão Completa</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --danger: #dc2626;
+            --success: #16a34a;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --border: #cbd5e1;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        /* Sistema de Abas */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            background-color: #e2e8f0;
+            color: #475569;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 900px) {
+            .grid-layout { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-size: 1.15rem;
+            margin-top: 0;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 0.9rem;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-primary { background-color: var(--primary); color: white; }
+        .btn-primary:hover { background-color: var(--primary-dark); }
+        .btn-secondary { background-color: #64748b; color: white; display: none; }
+
+        .table-responsive { overflow-x: auto; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.85rem;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        th { background-color: #f8fafc; }
+
+        .actions { display: flex; gap: 6px; }
+        .btn-action { padding: 6px 10px; font-size: 0.75rem; border-radius: 4px; flex: unset; }
+        .btn-edit { background-color: #e2e8f0; color: #334155; }
+        .btn-delete { background-color: #fee2e2; color: var(--danger); }
+
+        .alert {
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 0.875rem;
+            display: none;
+        }
+        .alert-success { background-color: #dcfce7; color: #166534; }
+        .alert-error { background-color: #fee2e2; color: #991b1b; }
+    </style>
 </head>
 <body>
-    
+
+<div class="container">
+    <header>
+        <h1>Farmácia - Balcão</h1>
+        <p>Sistema Integrado de Gestão</p>
+    </header>
+
+    <div id="global-alert" class="alert"></div>
+
+    <!-- Abas de Navegação -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="mudarAba('medicamentos')">Medicamentos</button>
+        <button class="tab-btn" onclick="mudarAba('produtos')">Produtos Gerais</button>
+    </div>
+
+    <!-- ABA 1: MEDICAMENTOS -->
+    <div id="tab-medicamentos" class="tab-content active">
+        <div class="grid-layout">
+            <div class="card">
+                <h2 id="med-form-title">Cadastrar Medicamento</h2>
+                <form id="form-med">
+                    <div class="form-group">
+                        <label>Nome Comercial *</label>
+                        <input type="text" id="med_comercial" required placeholder="Ex: Tylenol">
+                    </div>
+                    <div class="form-group">
+                        <label>Nome Genérico</label>
+                        <input type="text" id="med_generico" placeholder="Ex: Paracetamol">
+                    </div>
+                    <div class="form-group">
+                        <label>Unidade de Medida *</label>
+                        <input type="text" id="med_unidade" required placeholder="Ex: 500mg">
+                    </div>
+                    <div class="form-group">
+                        <label>Validade *</label>
+                        <input type="date" id="med_validade" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Preço (R$) *</label>
+                        <input type="number" id="med_preco" step="0.01" min="0.01" required placeholder="0.00">
+                    </div>
+                    <div class="btn-container">
+                        <button type="submit" class="btn-primary" id="med-btn-salvar">Salvar</button>
+                        <button type="button" class="btn-secondary" id="med-btn-cancelar" onclick="limparMed()">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>Catálogo de Medicamentos</h2>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Cód.</th>
+                                <th>Comercial</th>
+                                <th>Genérico</th>
+                                <th>Unid.</th>
+                                <th>Validade</th>
+                                <th>Preço</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-med">
+                            <tr><td colspan="7" style="text-align: center;">A carregar...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ABA 2: PRODUTOS GERAIS -->
+    <div id="tab-produtos" class="tab-content">
+        <div class="grid-layout">
+            <div class="card">
+                <h2 id="prod-form-title">Cadastrar Produto</h2>
+                <form id="form-prod">
+                    <div class="form-group">
+                        <label>Nome *</label>
+                        <input type="text" id="prod_nome" required placeholder="Ex: Shampoo Anticaspa">
+                    </div>
+                    <div class="form-group">
+                        <label>Categoria *</label>
+                        <input type="text" id="prod_categoria" required placeholder="Ex: Higiene Pessoal">
+                    </div>
+                    <div class="form-group">
+                        <label>Marca</label>
+                        <input type="text" id="prod_marca" placeholder="Ex: Clear">
+                    </div>
+                    <div class="form-group">
+                        <label>Código de Barras</label>
+                        <input type="text" id="prod_barras" placeholder="Ex: 7891020304050">
+                    </div>
+                    <div class="form-group">
+                        <label>Unidade de Medida</label>
+                        <input type="text" id="prod_unidade" value="unidade" placeholder="Ex: ml, un, kg">
+                    </div>
+                    <div class="form-group">
+                        <label>Preço (R$) *</label>
+                        <input type="number" id="prod_preco" step="0.01" min="0.01" required placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label>Quantidade em Stock *</label>
+                        <input type="number" id="prod_qtd" min="0" value="0" required>
+                    </div>
+                    <div class="btn-container">
+                        <button type="submit" class="btn-primary" id="prod-btn-salvar">Salvar</button>
+                        <button type="button" class="btn-secondary" id="prod-btn-cancelar" onclick="limparProd()">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>Catálogo de Produtos Gerais</h2>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Cód.</th>
+                                <th>Nome</th>
+                                <th>Categoria</th>
+                                <th>Marca</th>
+                                <th>Preço</th>
+                                <th>Stock</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-prod">
+                            <tr><td colspan="7" style="text-align: center;">A carregar...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Controlo de Abas
+    function mudarAba(aba) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        
+        if (aba === 'medicamentos') {
+            document.getElementById('tab-medicamentos').classList.add('active');
+            event.target.classList.add('active');
+            carregarMedicamentos();
+        } else {
+            document.getElementById('tab-produtos').classList.add('active');
+            event.target.classList.add('active');
+            carregarProdutos();
+        }
+    }
+
+    // --- LÓGICA DE MEDICAMENTOS ---
+    let editandoMedCodigo = null;
+
+    document.addEventListener("DOMContentLoaded", () => {
+        carregarMedicamentos();
+        carregarProdutos();
+    });
+
+    const formMed = document.getElementById("form-med");
+    formMed.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const dados = {
+            nome_comercial: document.getElementById("med_comercial").value,
+            nome_generico: document.getElementById("med_generico").value,
+            unidade_medida: document.getElementById("med_unidade").value,
+            validade: document.getElementById("med_validade").value,
+            preco: Number(document.getElementById("med_preco").value)
+        };
+
+        const url = editandoMedCodigo === null ? "/Cadatro_medicamento" : `/Alterar_medicamento/${editandoMedCodigo}`;
+        const method = editandoMedCodigo === null ? "POST" : "PUT";
+
+        try {
+            const res = await fetch(url, {
+                method,
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(dados)
+            });
+            const json = await res.json();
+            if (res.ok) {
+                mostrarAlerta(json.message || "Sucesso!", "success");
+                limparMed();
+                carregarMedicamentos();
+            } else {
+                mostrarAlerta(json.erro || json.error || "Erro ao processar.", "error");
+            }
+        } catch {
+            mostrarAlerta("Erro de conexão com o servidor.", "error");
+        }
+    });
+
+    async function carregarMedicamentos() {
+        try {
+            const res = await fetch("/Listar_medicamento");
+            const lista = await res.json();
+            const tbody = document.getElementById("tabela-med");
+            tbody.innerHTML = "";
+
+            if (!Array.isArray(lista) || lista.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center;">Nenhum medicamento registado.</td></tr>`;
+                return;
+            }
+
+            lista.forEach(m => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>#${m.codigo}</td>
+                        <td><strong>${m.nome_comercial}</strong></td>
+                        <td>${m.nome_generico || '-'}</td>
+                        <td>${m.unidade_medida}</td>
+                        <td>${m.validade}</td>
+                        <td>R$ ${Number(m.preco).toFixed(2)}</td>
+                        <td>
+                            <div class="actions">
+                                <button class="btn-action btn-edit" onclick="prepararEdicaoMed(${m.codigo}, '${m.nome_comercial}', '${m.nome_generico || ''}', '${m.unidade_medida}', '${m.validade}', ${m.preco})">Editar</button>
+                                <button class="btn-action btn-delete" onclick="deletarMed(${m.codigo})">Excluir</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+        } catch {
+            document.getElementById("tabela-med").innerHTML = `<tr><td colspan="7" style="text-align: center; color: red;">Erro ao carregar.</td></tr>`;
+        }
+    }
+
+    function prepararEdicaoMed(codigo, comercial, generico, unidade, validade, preco) {
+        editandoMedCodigo = codigo;
+        document.getElementById("med-form-title").innerText = `Editar Medicamento #${codigo}`;
+        document.getElementById("med-btn-salvar").innerText = "Atualizar";
+        document.getElementById("med-btn-cancelar").style.display = "block";
+
+        document.getElementById("med_comercial").value = comercial;
+        document.getElementById("med_generico").value = generico === 'null' ? '' : generico;
+        document.getElementById("med_unidade").value = unidade;
+        document.getElementById("med_validade").value = validade;
+        document.getElementById("med_preco").value = preco;
+    }
+
+    function limparMed() {
+        editandoMedCodigo = null;
+        document.getElementById("med-form-title").innerText = "Cadastrar Medicamento";
+        document.getElementById("med-btn-salvar").innerText = "Salvar";
+        document.getElementById("med-btn-cancelar").style.display = "none";
+        formMed.reset();
+    }
+
+    async function deletarMed(codigo) {
+        if (!confirm(`Excluir medicamento #${codigo}?`)) return;
+        const res = await fetch(`/Deletar_medicamento/${codigo}`, { method: "DELETE" });
+        if (res.ok) {
+            mostrarAlerta("Medicamento removido!", "success");
+            carregarMedicamentos();
+        } else {
+            mostrarAlerta("Erro ao excluir.", "error");
+        }
+    }
+
+
+    // --- LÓGICA DE PRODUTOS GERAIS ---
+    let editandoProdCodigo = null;
+
+    const formProd = document.getElementById("form-prod");
+    formProd.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const dados = {
+            nome: document.getElementById("prod_nome").value,
+            categoria: document.getElementById("prod_categoria").value,
+            marca: document.getElementById("prod_marca").value,
+            codigo_barras: document.getElementById("prod_barras").value,
+            unidade_medida: document.getElementById("prod_unidade").value,
+            preco: Number(document.getElementById("prod_preco").value),
+            quantidade: Number(document.getElementById("prod_qtd").value)
+        };
+
+        const url = editandoProdCodigo === null ? "/produto" : `/produto/${editandoProdCodigo}`;
+        const method = editandoProdCodigo === null ? "POST" : "PUT";
+
+        try {
+            const res = await fetch(url, {
+                method,
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(dados)
+            });
+            const json = await res.json();
+            if (res.ok) {
+                mostrarAlerta(json.message || "Sucesso!", "success");
+                limparProd();
+                carregarProdutos();
+            } else {
+                mostrarAlerta(json.erro || "Erro ao processar produto.", "error");
+            }
+        } catch {
+            mostrarAlerta("Erro de conexão com o servidor.", "error");
+        }
+    });
+
+    async function carregarProdutos() {
+        try {
+            const res = await fetch("/produto");
+            const lista = await res.json();
+            const tbody = document.getElementById("tabela-prod");
+            tbody.innerHTML = "";
+
+            if (!Array.isArray(lista) || lista.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center;">Nenhum produto registado.</td></tr>`;
+                return;
+            }
+
+            lista.forEach(p => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>#${p.codigo}</td>
+                        <td><strong>${p.nome}</strong></td>
+                        <td>${p.categoria}</td>
+                        <td>${p.marca || '-'}</td>
+                        <td>R$ ${Number(p.preco).toFixed(2)}</td>
+                        <td>${p.quantidade}</td>
+                        <td>
+                            <div class="actions">
+                                <button class="btn-action btn-edit" onclick="prepararEdicaoProd(${p.codigo}, '${p.nome}', '${p.categoria}', '${p.marca || ''}', '${p.codigo_barras || ''}', '${p.unidade_medida}', ${p.preco}, ${p.quantidade})">Editar</button>
+                                <button class="btn-action btn-delete" onclick="deletarProd(${p.codigo})">Excluir</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+        } catch {
+            document.getElementById("tabela-prod").innerHTML = `<tr><td colspan="7" style="text-align: center; color: red;">Erro ao carregar produtos.</td></tr>`;
+        }
+    }
+
+    function prepararEdicaoProd(codigo, nome, categoria, marca, barras, unidade, preco, qtd) {
+        editandoProdCodigo = codigo;
+        document.getElementById("prod-form-title").innerText = `Editar Produto #${codigo}`;
+        document.getElementById("prod-btn-salvar").innerText = "Atualizar";
+        document.getElementById("prod-btn-cancelar").style.display = "block";
+
+        document.getElementById("prod_nome").value = nome;
+        document.getElementById("prod_categoria").value = categoria;
+        document.getElementById("prod_marca").value = marca === 'null' ? '' : marca;
+        document.getElementById("prod_barras").value = barras === 'null' ? '' : barras;
+        document.getElementById("prod_unidade").value = unidade;
+        document.getElementById("prod_preco").value = preco;
+        document.getElementById("prod_qtd").value = qtd;
+    }
+
+    function limparProd() {
+        editandoProdCodigo = null;
+        document.getElementById("prod-form-title").innerText = "Cadastrar Produto";
+        document.getElementById("prod-btn-salvar").innerText = "Salvar";
+        document.getElementById("prod-btn-cancelar").style.display = "none";
+        formProd.reset();
+        document.getElementById("prod_unidade").value = "unidade";
+        document.getElementById("prod_qtd").value = "0";
+    }
+
+    async function deletarProd(codigo) {
+        if (!confirm(`Excluir produto #${codigo}?`)) return;
+        const res = await fetch(`/produto/${codigo}`, { method: "DELETE" });
+        if (res.ok) {
+            mostrarAlerta("Produto removido!", "success");
+            carregarProdutos();
+        } else {
+            mostrarAlerta("Erro ao excluir produto.", "error");
+        }
+    }
+
+    // Alertas Globais
+    function mostrarAlerta(msg, tipo) {
+        const el = document.getElementById("global-alert");
+        el.innerText = msg;
+        el.className = `alert alert-${tipo}`;
+        el.style.display = "block";
+        setTimeout(() => { el.style.display = "none"; }, 4000);
+    }
+</script>
+
 </body>
 </html>
