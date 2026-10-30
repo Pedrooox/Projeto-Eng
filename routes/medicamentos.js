@@ -5,7 +5,7 @@ const db = require('../db');
 router.use(express.json());
 
 // Rota POST: Cadastrar medicamento
-router.post("/medicamento", (req, res) => {
+router.post("/", (req, res) => {
     const { nome_comercial, nome_generico, unidade_medida, validade, preco, quantidade } = req.body;
     
     const precoNumerico = Number(preco);
@@ -51,7 +51,7 @@ router.post("/medicamento", (req, res) => {
 });
 
 // Rota GET: Listar catálogo de medicamentos
-router.get("/medicamento", (req, res) => {
+router.get("/", (req, res) => {
     try {
         const medicamentos = db.prepare('SELECT * FROM medicamentos ORDER BY codigo DESC').all();
         return res.status(200).json(medicamentos);
@@ -62,7 +62,7 @@ router.get("/medicamento", (req, res) => {
 });
 
 // Rota PUT: Alterar medicamento por código
-router.put("/medicamento/:codigo", (req, res) => {
+router.put("/:codigo", (req, res) => {
     const { codigo } = req.params;
     const { nome_comercial, nome_generico, unidade_medida, validade, preco, quantidade } = req.body; 
     
@@ -117,7 +117,7 @@ router.put("/medicamento/:codigo", (req, res) => {
 });
 
 // Rota DELETE: deletar algum medicamento
-router.delete("/medicamento/:codigo", (req, res) => {
+router.delete("/:codigo", (req, res) => {
     const { codigo } = req.params;
 
     try {

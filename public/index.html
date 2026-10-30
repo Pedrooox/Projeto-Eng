@@ -341,7 +341,7 @@
             preco: Number(document.getElementById("med_preco").value)
         };
 
-        const url = editandoMedCodigo === null ? "/Cadatro_medicamento" : `/Alterar_medicamento/${editandoMedCodigo}`;
+        const url = editandoMedCodigo === null ? "/medicamento" : `/medicamento/${editandoMedCodigo}`;
         const method = editandoMedCodigo === null ? "POST" : "PUT";
 
         try {
@@ -365,7 +365,7 @@
 
     async function carregarMedicamentos() {
         try {
-            const res = await fetch("/Listar_medicamento");
+            const res = await fetch("/medicamento");
             const lista = await res.json();
             const tbody = document.getElementById("tabela-med");
             tbody.innerHTML = "";
@@ -421,7 +421,7 @@
 
     async function deletarMed(codigo) {
         if (!confirm(`Excluir medicamento #${codigo}?`)) return;
-        const res = await fetch(`/Deletar_medicamento/${codigo}`, { method: "DELETE" });
+        const res = await fetch(`/medicamento/${codigo}`, { method: "DELETE" });
         if (res.ok) {
             mostrarAlerta("Medicamento removido!", "success");
             carregarMedicamentos();
