@@ -1,5 +1,5 @@
 const Database = require('better-sqlite3');
-const db = new Database('farmacia.sqlite');
+const db = new Database('database.sqlite');
 
 // Criação da tabela de medicamentos para o projeto
 db.exec(`
@@ -30,12 +30,12 @@ db.exec(`
 
 db.exec(`
     CREATE TABLE IF NOT EXISTS gerente (
-    Codigo INTEGER PRIMARY KEY AUTOINCREMENT,
-    CPF TEXT NOT NULL UNIQUE, 
-    Nome TEXT NOT NULL,
-    Email TEXT NOT NULL UNIQUE,
-    Telefone TEXT NOT NULL,
-    Senha TEXT NOT NULL
+        Codigo INTEGER PRIMARY KEY AUTOINCREMENT,
+        Cpf TEXT NOT NULL UNIQUE, 
+        Nome TEXT NOT NULL,
+        Email TEXT,
+        Telefone TEXT NOT NULL,
+        Senha TEXT NOT NULL
     );
 `)
 module.exports = db;
