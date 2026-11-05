@@ -28,4 +28,21 @@ db.exec(`
     );
 `);
 
+// Criação da tabela de funcionários/colaboradores
+db.exec(`
+    CREATE TABLE IF NOT EXISTS funcionarios (
+        codigo INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome_completo TEXT NOT NULL,
+        cpf TEXT NOT NULL UNIQUE,
+        data_nascimento TEXT NOT NULL,
+        endereco TEXT,
+        curriculo TEXT,
+        cargo TEXT NOT NULL,
+        email TEXT UNIQUE,
+        status TEXT NOT NULL DEFAULT 'ativo',
+        motivo_exclusao TEXT,
+        data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+`);
+
 module.exports = db;
