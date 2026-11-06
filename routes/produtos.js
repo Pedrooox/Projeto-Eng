@@ -5,7 +5,7 @@ const db = require('../db');
 router.use(express.json());
 
 // Rota POST: Cadastrar produto não-medicamento (higiene, cosméticos, perfumaria, etc.)
-router.post('/produto', (req, res) => {
+router.post('/', (req, res) => {
     const { nome, categoria, marca, codigo_barras, unidade_medida, preco, quantidade } = req.body;
 
     const precoNumerico = Number(preco);
@@ -77,7 +77,7 @@ router.post('/produto', (req, res) => {
 });
 
 // Rota GET: Listar produtos com suporte a busca/filtro por termo ou categoria
-router.get('/produto', (req, res) => {
+router.get('/', (req, res) => {
     const { termo, categoria } = req.query;
 
     try {
@@ -111,7 +111,7 @@ router.get('/produto', (req, res) => {
 });
 
 // Rota GET: Consultar produto por código
-router.get('/produto/:codigo', (req, res) => {
+router.get('/:codigo', (req, res) => {
     const { codigo } = req.params;
 
     try {
@@ -129,7 +129,7 @@ router.get('/produto/:codigo', (req, res) => {
 });
 
 // Rota PUT: Atualizar produto por código
-router.put('/produto/:codigo', (req, res) => {
+router.put('/:codigo', (req, res) => {
     const { codigo } = req.params;
     const { nome, categoria, marca, codigo_barras, unidade_medida, preco, quantidade } = req.body;
 
@@ -210,7 +210,7 @@ router.put('/produto/:codigo', (req, res) => {
 });
 
 // Rota DELETE: Remover produto por código
-router.delete('/produto/:codigo', (req, res) => {
+router.delete('/:codigo', (req, res) => {
     const { codigo } = req.params;
 
     try {

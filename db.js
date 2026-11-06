@@ -1,5 +1,5 @@
 const Database = require('better-sqlite3');
-const db = new Database('farmacia.sqlite');
+const db = new Database('database.sqlite');
 
 // Criação da tabela de medicamentos para o projeto
 db.exec(`
