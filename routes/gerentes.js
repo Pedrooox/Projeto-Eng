@@ -120,6 +120,19 @@ router.delete("/:codigo", (req, res) => {
     }
 });
 
+router.get("/", (req, res) => {
+    try {
+        const stmt = db.prepare(`
+            SELECT codigo, Cpf as cpf, Nome as nome, Email as email, Telefone as telefone 
+            FROM gerente
+        `);
+        const gerentes = stmt.all();
 
+        return res.status(200).json(gerentes);
+    } catch (error) {
+        console.error("Erro ao buscar gerentes:", error);
+        return res.status(500).json({ error: "Erro interno ao buscar lista de gerentes." });
+    }
+});
 
 module.exports = router;
