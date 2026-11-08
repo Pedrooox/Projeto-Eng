@@ -101,3 +101,25 @@ router.put("/:codigo", (req, res) => {
         return res.status(500).json({ error: "Erro interno ao atualizar o Gerente." });
     }
 });
+
+router.delete("/:codigo", (req, res) => {
+    const { codigo } = req.params;
+
+    try{
+        const smt = db.prepare(`DELETE FROM gerente WHERE codigo = ? `);  
+        const info = smt.run(codigo);
+
+        if (info.changes === 0) {
+            return res.status(404).json({ erro: "Gerente não encontrado." });
+        }
+
+        return res.status(200).json({ message: "Cadastro de gerente removido com sucesso!" });
+    } catch (error) {
+        console.error("Erro ao deletar o cadastro do gerente:", error);
+        return res.status(500).json({ error: "Erro interno ao remover o cadastro do gerente." });
+    }
+});
+
+
+
+module.exports = router;
