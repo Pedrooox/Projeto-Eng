@@ -11,9 +11,9 @@ app.use(express.json());
 app.use(express.static('public'));
 
 // Conecta as rotas dos módulos
-app.use('/', medicamentosRoutes);
-app.use('/', produtosRoutes);
-app.use('/', farmaceuticosRoutes);
+app.use('/medicamento', medicamentosRoutes);
+app.use('/produto', produtosRoutes);
+app.use('/farmaceutico', farmaceuticosRoutes);
 
 const PORT = 3000;
 app.listen(PORT, () => {
