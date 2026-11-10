@@ -21,9 +21,9 @@ function gerarEmailProfissional(nomeCompleto) {
     return `${partes[0]}.${partes[partes.length - 1]}@farmacia.com`;
 }
 
-// Rota POST: Cadastrar Farmacêutico (/farmaceutico)
-// Campos: nome_completo, cpf, data_nascimento, crf, senha, email (opcional/auto), telefone (opcional)
-router.post('/', (req, res) => {
+// Rota POST: Cadastrar Farmacêutico
+// Aceita tanto a raiz da rota montada ('/') quanto '/farmaceutico'
+router.post(['/', '/farmaceutico'], (req, res) => {
     const { nome_completo, cpf, data_nascimento, crf, senha, email, telefone } = req.body;
 
     if (!nome_completo || !nome_completo.toString().trim()) {
@@ -108,8 +108,8 @@ router.post('/', (req, res) => {
     }
 });
 
-// Rota GET: Listar Farmacêuticos cadastrados (/farmaceutico)
-router.get('/', (req, res) => {
+// Rota GET: Listar Farmacêuticos cadastrados
+router.get(['/', '/farmaceutico'], (req, res) => {
     const { termo, status } = req.query;
 
     try {
@@ -148,8 +148,8 @@ router.get('/', (req, res) => {
     }
 });
 
-// Rota GET: Exibir informações gerais de um Farmacêutico específico (/farmaceutico/:codigo)
-router.get('/:codigo', (req, res) => {
+// Rota GET: Exibir informações gerais de um Farmacêutico específico
+router.get(['/:codigo', '/farmaceutico/:codigo'], (req, res) => {
     const { codigo } = req.params;
 
     try {
@@ -170,8 +170,8 @@ router.get('/:codigo', (req, res) => {
     }
 });
 
-// Rota PUT: Atualizar dados de um Farmacêutico (/farmaceutico/:codigo)
-router.put('/:codigo', (req, res) => {
+// Rota PUT: Atualizar dados de um Farmacêutico
+router.put(['/:codigo', '/farmaceutico/:codigo'], (req, res) => {
     const { codigo } = req.params;
     const { nome_completo, cpf, data_nascimento, crf, senha, email, telefone, status } = req.body;
 
@@ -239,8 +239,8 @@ router.put('/:codigo', (req, res) => {
     }
 });
 
-// Rota DELETE: Remover Farmacêutico com Motivo Obrigatório (/farmaceutico/:codigo)
-router.delete('/:codigo', (req, res) => {
+// Rota DELETE: Remover Farmacêutico com Motivo Obrigatório
+router.delete(['/:codigo', '/farmaceutico/:codigo'], (req, res) => {
     const { codigo } = req.params;
     const { motivo_exclusao, motivo } = req.body || {};
     const motivoFinal = motivo_exclusao || motivo || req.query.motivo;
