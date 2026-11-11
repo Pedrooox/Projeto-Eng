@@ -28,4 +28,14 @@ db.exec(`
     );
 `);
 
+db.exec(`
+    CREATE TABLE IF NOT EXISTS gerente (
+        Codigo INTEGER PRIMARY KEY AUTOINCREMENT,
+        Cpf TEXT NOT NULL UNIQUE, 
+        Nome TEXT NOT NULL,
+        Email TEXT,
+        Telefone TEXT NOT NULL,
+        Senha TEXT NOT NULL
+    );
+`)
 module.exports = db;
