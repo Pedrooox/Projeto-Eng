@@ -53,7 +53,9 @@ db.exec(`
         Nome TEXT NOT NULL,
         Email TEXT,
         Telefone TEXT NOT NULL,
-        Senha TEXT NOT NULL
+        Senha TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'ativo',
+        data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP
     );
 `);
 
