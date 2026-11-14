@@ -28,14 +28,33 @@ db.exec(`
     );
 `);
 
+// Criação da tabela de farmacêuticos
+db.exec(`
+    CREATE TABLE IF NOT EXISTS farmaceuticos (
+        codigo INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome_completo TEXT NOT NULL,
+        cpf TEXT NOT NULL UNIQUE,
+        data_nascimento TEXT NOT NULL,
+        crf TEXT NOT NULL UNIQUE,
+        senha TEXT NOT NULL,
+        email TEXT UNIQUE,
+        telefone TEXT,
+        status TEXT NOT NULL DEFAULT 'ativo',
+        motivo_exclusao TEXT,
+        data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+`);
+
+// Criação da tabela de gerentes
 db.exec(`
     CREATE TABLE IF NOT EXISTS gerente (
         Codigo INTEGER PRIMARY KEY AUTOINCREMENT,
-        Cpf TEXT NOT NULL UNIQUE, 
+        Cpf TEXT NOT NULL UNIQUE,
         Nome TEXT NOT NULL,
         Email TEXT,
         Telefone TEXT NOT NULL,
         Senha TEXT NOT NULL
     );
-`)
+`);
+
 module.exports = db;
