@@ -51,3 +51,51 @@ router.post("/", (req, res) => {
         return res.status(500).json({ erro: "Erro interno no servidor." });
     }
 });
+
+// PUT - Atualizar cliente ativo
+router.put("/:codigo", (req, res) => {
+    const { codigo } = req.params;
+    const { Nome, Email, Telefone } = req.body;
+
+    const teleLimpo = Telefone ? String(Telefone).replace(/\D/g, '') : null;
+
+    if (!Email || !Email.trim()) {
+        return res.status(400).json({
+            erro: "O campo E-mail é obrigatório."
+        });
+    }
+
+    try {
+        const stmt = db.prepare(`
+            UPDATE cliente
+            SET Nome = ?, Email = ?, Telefone = ?
+            WHERE Codigo = ? AND status = 'ativo'
+        `);
+
+        const info = stmt.run(
+            Nome ? Nome.trim() : null,
+            Email.trim(),
+            teleLimpo || null,
+            codigo
+        );
+
+        if (info.changes === 0) {
+            return res.status(404).json({
+                erro: "Cliente não encontrado ou inativo."
+            });
+        }
+
+        return res.status(200).json({
+            message: "Cadastro de Cliente alterado com sucesso!",
+            cliente: {
+                codigo: Number(codigo),
+                nome: Nome ? Nome.trim() : null,
+                email: Email.trim(),
+                telefone: teleLimpo || null
+            }
+        });
+    } catch (error) {
+        console.error("Erro ao atualizar cadastro do Cliente:", error);
+        return res.status(500).json({ erro: "Erro interno ao atualizar o Cliente." });
+    }
+});
