@@ -123,4 +123,28 @@ router.delete("/:codigo", (req, res) => {
     }
 });
 
+// GET - Listar apenas clientes ativos
+router.get("/", (req, res) => {
+    try {
+        const stmt = db.prepare(`
+            SELECT 
+                Codigo as codigo, 
+                Cpf as cpf, 
+                Nome as nome, 
+                Email as email, 
+                Telefone as telefone,
+                status,
+                data_cadastro
+            FROM cliente
+            WHERE status = 'ativo'
+        `);
+        const clientes = stmt.all();
+
+        return res.status(200).json(clientes);
+    } catch (error) {
+        console.error("Erro ao buscar clientes:", error);
+        return res.status(500).json({ erro: "Erro interno ao buscar lista de clientes." });
+    }
+});
+
 module.exports = router;
