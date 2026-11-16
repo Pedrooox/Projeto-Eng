@@ -99,3 +99,28 @@ router.put("/:codigo", (req, res) => {
         return res.status(500).json({ erro: "Erro interno ao atualizar o Cliente." });
     }
 });
+
+// DELETE - Exclusão lógica (altera status para 'inativo')
+router.delete("/:codigo", (req, res) => {
+    const { codigo } = req.params;
+
+    try {
+        const stmt = db.prepare(`
+            UPDATE cliente 
+            SET status = 'inativo' 
+            WHERE Codigo = ? AND status = 'ativo'
+        `);
+        const info = stmt.run(codigo);
+
+        if (info.changes === 0) {
+            return res.status(404).json({ erro: "Cliente não encontrado ou já está inativo." });
+        }
+
+        return res.status(200).json({ message: "Cliente inativado com sucesso!" });
+    } catch (error) {
+        console.error("Erro ao inativar o cliente:", error);
+        return res.status(500).json({ erro: "Erro interno ao inativar o cadastro do cliente." });
+    }
+});
+
+module.exports = router;
