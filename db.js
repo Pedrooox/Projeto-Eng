@@ -59,4 +59,17 @@ db.exec(`
     );
 `);
 
+// Criação da tabela de coletores
+db.exec(`
+    CREATE TABLE IF NOT EXISTS coletores (
+        codigo INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome_completo TEXT NOT NULL,
+        cpf TEXT NOT NULL UNIQUE,
+        telefone TEXT NOT NULL UNIQUE,
+        senha TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'ativo',
+        data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+`);
+
 module.exports = db;
