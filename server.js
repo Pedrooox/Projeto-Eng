@@ -5,6 +5,7 @@ const medicamentosRoutes = require('./routes/medicamentos');
 const produtosRoutes = require('./routes/produtos');
 const farmaceuticosRoutes = require('./routes/farmaceuticos');
 const gerentesRoutes = require('./routes/gerentes');
+const coletoresRoutes = require('./routes/coletores');
 
 const app = express();
 app.use(express.json());
@@ -15,6 +16,7 @@ app.use('/medicamento', medicamentosRoutes);
 app.use('/produto', produtosRoutes);
 app.use('/farmaceutico', farmaceuticosRoutes);
 app.use('/gerente', gerentesRoutes);
+app.use('/coletor', coletoresRoutes);
 
 const PORT = 3000;
 app.listen(PORT, () => {
