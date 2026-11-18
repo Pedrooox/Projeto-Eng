@@ -4,6 +4,40 @@ const db = require('../db');
 
 router.use(express.json());
 
+// Remove pontuação para comparar CPF e telefone mesmo com formatações diferentes
+function somenteDigitos(valor) {
+    return valor ? valor.toString().replace(/\D/g, '') : '';
+}
+
+// Verifica se já existe outro coletor com o mesmo CPF ou telefone
+function verificarDuplicidade(cpfFormatado, telefoneFormatado, ignorarCodigo = null) {
+    const cpfDigitos = somenteDigitos(cpfFormatado);
+    const telDigitos = somenteDigitos(telefoneFormatado);
+
+    const filtroCodigo = ignorarCodigo !== null ? ' AND codigo != ?' : '';
+    const extraParams = ignorarCodigo !== null ? [ignorarCodigo] : [];
+
+    const cpfDuplicado = db.prepare(`
+        SELECT codigo FROM coletores
+        WHERE (cpf = ? OR (? != '' AND replace(replace(replace(cpf, '.', ''), '-', ''), ' ', '') = ?))${filtroCodigo}
+    `).get(cpfFormatado, cpfDigitos, cpfDigitos, ...extraParams);
+
+    if (cpfDuplicado) {
+        return { erro: "CPF já cadastrado para outro coletor." };
+    }
+
+    const telefoneDuplicado = db.prepare(`
+        SELECT codigo FROM coletores
+        WHERE (telefone = ? OR (? != '' AND replace(replace(replace(replace(replace(telefone, '(', ''), ')', ''), '-', ''), ' ', ''), '+', '') = ?))${filtroCodigo}
+    `).get(telefoneFormatado, telDigitos, telDigitos, ...extraParams);
+
+    if (telefoneDuplicado) {
+        return { erro: "Telefone já cadastrado para outro coletor." };
+    }
+
+    return null;
+}
+
 // Valida e normaliza campos obrigatórios de entrada para cadastro/edição
 function validarCamposColetor(body, exigirSenha = true) {
     const { nome_completo, nome, cpf, telefone, senha } = body || {};
@@ -41,6 +75,11 @@ router.post('/', (req, res) => {
 
     const { nomeFormatado, cpfFormatado, telefoneFormatado, senhaFormatada } = dados;
 
+    const duplicidade = verificarDuplicidade(cpfFormatado, telefoneFormatado);
+    if (duplicidade) {
+        return res.status(409).json(duplicidade);
+    }
+
     try {
         const stmt = db.prepare(`
             INSERT INTO coletores (nome_completo, cpf, telefone, senha, status)
@@ -68,16 +107,37 @@ router.post('/', (req, res) => {
     }
 });
 
-// Rota GET: Listar coletores ativos (/coletor)
+// Rota GET: Listar coletores com suporte a busca por termo e filtro de status (/coletor)
 router.get('/', (req, res) => {
-    try {
-        const coletores = db.prepare(`
-            SELECT codigo, nome_completo, cpf, telefone, status, data_cadastro
-            FROM coletores
-            WHERE status = 'ativo'
-            ORDER BY codigo DESC
-        `).all();
+    const { termo, status } = req.query;
 
+    try {
+        let query = 'SELECT codigo, nome_completo, cpf, telefone, status, data_cadastro FROM coletores';
+        const params = [];
+        const conditions = [];
+
+        if (status && status.toLowerCase() === 'todos') {
+            // Lista todos os registros independente do status
+        } else if (status) {
+            conditions.push('status = ?');
+            params.push(status.toLowerCase());
+        } else {
+            conditions.push("status = 'ativo'");
+        }
+
+        if (termo && termo.trim()) {
+            conditions.push('(nome_completo LIKE ? OR cpf LIKE ? OR telefone LIKE ?)');
+            const termoLike = `%${termo.trim()}%`;
+            params.push(termoLike, termoLike, termoLike);
+        }
+
+        if (conditions.length > 0) {
+            query += ' WHERE ' + conditions.join(' AND ');
+        }
+
+        query += ' ORDER BY codigo DESC';
+
+        const coletores = db.prepare(query).all(...params);
         return res.status(200).json(coletores);
     } catch (error) {
         console.error("Erro ao listar coletores:", error);
@@ -121,6 +181,11 @@ router.put('/:codigo', (req, res) => {
         const existente = db.prepare("SELECT * FROM coletores WHERE codigo = ? AND status = 'ativo'").get(codigo);
         if (!existente) {
             return res.status(404).json({ erro: "Coletor não encontrado." });
+        }
+
+        const duplicidade = verificarDuplicidade(cpfFormatado, telefoneFormatado, codigo);
+        if (duplicidade) {
+            return res.status(409).json(duplicidade);
         }
 
         const senhaFinal = senhaFormatada || existente.senha;
