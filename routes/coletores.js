@@ -150,4 +150,39 @@ router.put('/:codigo', (req, res) => {
     }
 });
 
+// Rota DELETE: Excluir coletor mediante confirmação (/coletor/:codigo)
+router.delete('/:codigo', (req, res) => {
+    const { codigo } = req.params;
+    const { confirmacao } = req.body || {};
+    const confirmacaoQuery = req.query.confirmacao;
+
+    if (confirmacao === false || confirmacaoQuery === 'false') {
+        return res.status(400).json({
+            erro: "Exclusão cancelada: é necessário confirmar a remoção do coletor."
+        });
+    }
+
+    try {
+        const coletor = db.prepare("SELECT codigo, nome_completo FROM coletores WHERE codigo = ? AND status = 'ativo'").get(codigo);
+        if (!coletor) {
+            return res.status(404).json({ erro: "Coletor não encontrado." });
+        }
+
+        if (req.query.hard === 'true') {
+            db.prepare('DELETE FROM coletores WHERE codigo = ?').run(codigo);
+        } else {
+            db.prepare("UPDATE coletores SET status = 'inativo' WHERE codigo = ?").run(codigo);
+        }
+
+        return res.status(200).json({
+            message: "Coletor removido com sucesso!",
+            codigo: Number(codigo),
+            nome_completo: coletor.nome_completo
+        });
+    } catch (error) {
+        console.error("Erro ao remover coletor:", error);
+        return res.status(500).json({ erro: "Erro interno ao remover o coletor." });
+    }
+});
+
 module.exports = router;
