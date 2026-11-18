@@ -59,6 +59,19 @@ db.exec(`
     );
 `);
 
+// Criação da tabela de clientes
+db.exec(`
+    CREATE TABLE IF NOT EXISTS cliente (
+        Codigo INTEGER PRIMARY KEY AUTOINCREMENT,
+        Cpf TEXT NOT NULL UNIQUE,
+        Nome TEXT,
+        Email TEXT NOT NULL,
+        Telefone TEXT,
+        status TEXT NOT NULL DEFAULT 'ativo',
+        data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+`);
+
 // Criação da tabela de coletores
 db.exec(`
     CREATE TABLE IF NOT EXISTS coletores (
