@@ -1,0 +1,14 @@
+services:
+  app:
+    build: .
+    container_name: projeto-eng
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_PATH=/app/data/database.sqlite
+    volumes:
+      - sqlite_data:/app/data
+    restart: unless-stopped
+
+volumes:
+  sqlite_data:
